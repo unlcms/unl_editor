@@ -1,0 +1,19 @@
+<?php
+
+function unl_editor_editor_js_settings_alter(array &$settings) {
+  foreach (array_keys($settings['editor']['formats']) as $text_format_id) {
+    if ($settings['editor']['formats'][$text_format_id]['editor'] === 'ckeditor') {
+      $settings['editor']['formats'][$text_format_id]['editorSettings']['height'] = '600px';
+
+      if (!\Drupal::currentUser()->hasPermission('edit html code')) {
+        foreach (array_keys($settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar']) as $key) {
+          foreach ($settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$key]['items'] as $item => $label) {
+            if ($label == 'Source') {
+              unset($settings['editor']['formats'][$text_format_id]['editorSettings']['toolbar'][$key]['items'][$item]);
+            }
+          }
+        }
+      }
+    }
+  }
+}

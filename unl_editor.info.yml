@@ -1,0 +1,9 @@
+name: 'UNL Editor'
+description: 'Modifications for text formats and editors.'
+package: 'UNL'
+type: module
+core: 8.x
+version: 1.x
+
+dependencies:
+  - ckeditor
