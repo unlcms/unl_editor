@@ -25,3 +25,61 @@ function unl_editor_editor_js_settings_alter(array &$settings) {
     }
   }
 }
+
+/**
+ * Returns path to CodeMirror, or FALSE if not found.
+ */
+function unl_editor_codemirror() {
+  static $path;
+
+  // Only process this once per page load.
+  if (is_null($path)) {
+    if (Drupal::moduleHandler()->moduleExists('libraries')) {
+      $path = libraries_get_path('codemirror');
+    }
+    else {
+      $path = 'libraries/codemirror';
+    }
+    $path = file_exists($path) && is_dir($path) ? $path : FALSE;
+  }
+
+  return '/' . $path;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function unl_editor_form_node_page_edit_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  $path = unl_editor_codemirror();
+  if (!empty($path)) {
+    $form['#attached']['library'][] = 'unl_editor/codemirror';
+    $form['#attached']['library'][] = 'unl_editor/admin';
+  }
+}
+
+/**
+ * Implements hook_library_info_build().
+ */
+function unl_editor_library_info_build() {
+  $libraries = [];
+  if ($path = unl_editor_codemirror()) {
+    $libraries['codemirror'] = [
+      'version' => 'VERSION',
+      'css' => [
+        'component' => [
+          $path . '/lib/codemirror.css' => [],
+        ],
+      ],
+      'js' => [
+        $path . '/lib/codemirror.js' => [],
+        $path . '/mode/css/css.js' => [],
+        'js/unl_editor.js' => [],
+      ],
+      'dependencies' => [
+        'core/jquery',
+        'core/drupal',
+      ],
+    ];
+  }
+  return $libraries;
+}
