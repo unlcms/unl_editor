@@ -1,3 +1,6 @@
 edit html code:
   title: 'Edit HTML source code'
   description: 'Gain access to the Source button in the WYSIWYG editor.'
+edit html paragraph:
+  title: 'Edit HTML Paragraphs'
+
