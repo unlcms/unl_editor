@@ -1,4 +1,11 @@
+/* Enlarge the font size */
 .CodeMirror {
     font: 13px/1.4em monospace;
     text-align: left;
+}
+
+/* Hide the "About text formats" link since a single text format is chosen
+   for each formatted text area field with the allowed_formats module. */
+.filter-wrapper {
+    display: none;
 }
