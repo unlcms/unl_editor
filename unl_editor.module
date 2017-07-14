@@ -49,7 +49,7 @@ function unl_editor_codemirror() {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function unl_editor_form_node_page_edit_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+function unl_editor_form_node_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   $path = unl_editor_codemirror();
   if (!empty($path)) {
     $form['#attached']['library'][] = 'unl_editor/codemirror';
