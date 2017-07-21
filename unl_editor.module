@@ -1,5 +1,9 @@
 <?php
 
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\paragraphs\ParagraphInterface;
+
 /**
  * Implements hook_editor_js_settings_alter().
  */
@@ -27,27 +31,36 @@ function unl_editor_editor_js_settings_alter(array &$settings) {
 }
 
 /**
- * Returns path to CodeMirror, or FALSE if not found.
+ * Implements hook_ENTITY_TYPE_access() for entity type "paragraph".
  */
-function unl_editor_codemirror() {
-  static $path;
-
-  // Only process this once per page load.
-  if (is_null($path)) {
-    if (Drupal::moduleHandler()->moduleExists('libraries')) {
-      $path = libraries_get_path('codemirror');
-    }
-    else {
-      $path = 'libraries/codemirror';
-    }
-    $path = file_exists($path) && is_dir($path) ? $path : FALSE;
+function unl_editor_paragraph_access(ParagraphInterface $entity, $operation, AccountInterface $account) {
+  if (!in_array($operation, array('update', 'delete'), TRUE)) {
+    return AccessResult::neutral();
   }
 
-  return $path;
+  if ($entity->getType() == 'html' && !$account->hasPermission('edit html paragraph')) {
+    return AccessResult::forbidden();
+  }
+  else {
+    return AccessResult::neutral();
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_create_access() for entity type "paragraph".
+ */
+function unl_editor_paragraph_create_access(AccountInterface $account = NULL, array $context = array(), $entity_bundle = NULL) {
+  if ($entity_bundle == 'html' && !$account->hasPermission('edit html paragraph')) {
+    return AccessResult::forbidden();
+  }
+  else {
+    return AccessResult::neutral();
+  }
 }
 
 /**
  * Implements hook_form_FORM_ID_alter().
+ * Add the JS to enable CodeMirror. The JS only attaches CodeMirror to field_html fields.
  */
 function unl_editor_form_node_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
   $path = unl_editor_codemirror();
@@ -83,4 +96,24 @@ function unl_editor_library_info_build() {
     ];
   }
   return $libraries;
+}
+
+/**
+ * Returns path to CodeMirror, or FALSE if not found.
+ */
+function unl_editor_codemirror() {
+  static $path;
+
+  // Only process this once per page load.
+  if (is_null($path)) {
+    if (Drupal::moduleHandler()->moduleExists('libraries')) {
+      $path = libraries_get_path('codemirror');
+    }
+    else {
+      $path = 'libraries/codemirror';
+    }
+    $path = file_exists($path) && is_dir($path) ? $path : FALSE;
+  }
+
+  return $path;
 }
