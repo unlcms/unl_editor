@@ -43,7 +43,7 @@ function unl_editor_codemirror() {
     $path = file_exists($path) && is_dir($path) ? $path : FALSE;
   }
 
-  return '/' . $path;
+  return $path;
 }
 
 /**
@@ -63,6 +63,7 @@ function unl_editor_form_node_form_alter(array &$form, \Drupal\Core\Form\FormSta
 function unl_editor_library_info_build() {
   $libraries = [];
   if ($path = unl_editor_codemirror()) {
+    $path = '/' . $path;
     $libraries['codemirror'] = [
       'version' => 'VERSION',
       'css' => [
