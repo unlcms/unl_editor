@@ -82,7 +82,6 @@ function unl_editor_form_node_form_alter(array &$form, \Drupal\Core\Form\FormSta
   if (!empty($path)) {
     $form['#attached']['library'][] = 'unl_editor/codemirror';
   }
-  $form['#attached']['library'][] = 'unl_editor/admin';
 }
 
 /**
